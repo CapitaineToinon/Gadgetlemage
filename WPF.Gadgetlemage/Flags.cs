@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace WPF.Gadgetlemage
 {
+    /// <summary>
+    /// Flags magic
+    /// </summary>
     public static class Flags
     {
         public static Dictionary<string, int> Groups = new Dictionary<string, int>()

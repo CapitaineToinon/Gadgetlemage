@@ -79,8 +79,10 @@ namespace WPF.Gadgetlemage
 
                 Dispatcher.Invoke(new Action(() =>
                 {
+                    btnCreate.IsEnabled = Hook.Loaded;
+
                     bool auto = cbxAuto.IsChecked ?? false;
-                    if (Hook.Hooked && auto)
+                    if (Hook.Hooked && Hook.Loaded && auto)
                     {
                         Hook.AutomaticallyGetItem();
                     }
@@ -208,7 +210,7 @@ namespace WPF.Gadgetlemage
         {
             bool hotkeyEnabled = cbxHotkey.IsChecked ?? false;
             bool consume = cbxConsume.IsChecked ?? false;
-            if (!e.IsUp && hotkeyEnabled)
+            if (!e.IsUp && hotkeyEnabled && Hook.Focused)
             {
                 if (createHotkey.Trigger(e.KeyCode) && consume)
                 {
@@ -224,6 +226,7 @@ namespace WPF.Gadgetlemage
         /// <param name="e"></param>
         private void KeyboardHook_KeyDownOrUp_SetupHotkey(object sender, GlobalKeyboardHookEventArgs e)
         {
+            // Only on KeyDown, if process has focus and is loaded
             if (!e.IsUp)
             {
                 createHotkey.Key = (VirtualKey)e.KeyCode;
@@ -278,7 +281,7 @@ namespace WPF.Gadgetlemage
         /// </summary>
         public void GetItem()
         {
-            if (Hook.Hooked)
+            if (Hook.Hooked && Hook.Loaded)
             {
                 Hook.GetItem();
             }

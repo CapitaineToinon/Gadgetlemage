@@ -53,10 +53,12 @@ namespace WPF.Gadgetlemage
         private const string RemasterItemAddrAOB = "48 89 5C 24 18 89 54 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 F9";
         private const string RemasterInventoryDataAOB = "48 8B 05 ? ? ? ? 48 85 C0 ? ? F3 0F 58 80 AC 00 00 00";
         private const string RemasterFlagsAOB = "48 8B 0D ? ? ? ? 99 33 C2 45 33 C0 2B C2 8D 50 F6";
+        public const string RemasterChrFollowCamAOB = "48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B 4E 68 48 8B 05 ? ? ? ? 48 89 48 60";
         private PHPointer RemasterBasePtr;
         private PHPointer RemasterItemAddr;
         private PHPointer RemasterInventoryData;
         private PHPointer RemasterFlags;
+        private PHPointer RemasterChrFollowCam;
         #endregion
 
         #region Public properties
@@ -90,6 +92,24 @@ namespace WPF.Gadgetlemage
         public Weapon SelectedWeapon { get; set; }
 
         /// <summary>
+        /// If the Process is in focus
+        /// </summary>
+        public bool Focused => Hooked && User32.GetForegroundProcessID() == Process.Id;
+
+        /// <summary>
+        /// If the save is loaded
+        /// </summary>
+        public bool Loaded
+        {
+            get
+            {
+                return (Version == Version.DarkSoulsRemastered)
+                    ? (RemasterChrFollowCam.Resolve() != IntPtr.Zero)
+                    : true;
+            }
+        }
+
+        /// <summary>
         /// Game version. Only remastered is 64 bits
         /// </summary>
         public Version Version
@@ -117,6 +137,7 @@ namespace WPF.Gadgetlemage
             RemasterBasePtr = RegisterRelativeAOB(RemasterBasePtrAOB, 3, 7);
             RemasterItemAddr = RegisterAbsoluteAOB(RemasterItemAddrAOB);
             RemasterFlags = RegisterRelativeAOB(RemasterFlagsAOB, 3, 7, 0, 0);
+            RemasterChrFollowCam = RegisterRelativeAOB(RemasterChrFollowCamAOB, 3, 7, 0, 0x60, 0x60);
 
             RemasterInventoryData = RegisterRelativeAOB(RemasterInventoryDataAOB, 3, 7);
         }
