@@ -1,5 +1,7 @@
 # Gadgetlemage
-A tool to practice Black Knight Weapon bases speedruns in Dark Souls: Prepare to Die Edition and Dark Souls: Remastered.
+A tool to practice Black Knight Weapon based speedruns in Dark Souls: Prepare to Die Edition and Dark Souls: Remastered.
+
+## Screenshot
 ![App image](https://raw.githubusercontent.com/CapitaineToinon/Gadgetlemage/master/app.png)
 
 ## Credits
