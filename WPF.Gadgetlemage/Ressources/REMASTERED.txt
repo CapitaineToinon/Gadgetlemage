@@ -1,0 +1,18 @@
+﻿0:  ba fe fe fe fe          mov    edx,0xfefefefe
+5:  41 b9 fe fe fe fe       mov    r9d,0xfefefefe
+b:  41 b8 fe fe fe fe       mov    r8d,0xfefefefe
+11: 41 bc fe fe fe fe       mov    r12d,0xfefefefe
+17: 48 a1 fe fe fe fe fe    movabs rax,ds:0xfefefefefefefefe
+1e: fe fe fe
+21: c6 44 24 38 01          mov    BYTE PTR [rsp+0x38],0x1
+26: 40 88 7c 24 30          mov    BYTE PTR [rsp+0x30],dil
+2b: c6 44 24 28 01          mov    BYTE PTR [rsp+0x28],0x1
+30: 4c 8b 78 10             mov    r15,QWORD PTR [rax+0x10]
+34: c6 44 24 20 01          mov    BYTE PTR [rsp+0x20],0x1
+39: 49 8d 8f 80 02 00 00    lea    rcx,[r15+0x280]
+40: 48 83 ec 38             sub    rsp,0x38
+44: 49 be fe fe fe fe fe    movabs r14,0xfefefefefefefefe
+4b: fe fe fe
+4e: 41 ff d6                call   r14
+51: 48 83 c4 38             add    rsp,0x38
+55: c3                      ret 

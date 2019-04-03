@@ -1,0 +1,13 @@
+﻿0:  bf fe fe fe fe          mov    edi,0xfefefefe
+5:  b9 fe fe fe fe          mov    ecx,0xfefefefe
+a:  be fe fe fe fe          mov    esi,0xfefefefe
+f:  bd fe fe fe fe          mov    ebp,0xfefefefe
+14: bb ff ff ff ff          mov    ebx,0xffffffff
+19: 6a 00                   push   0x0
+1b: 6a 01                   push   0x1
+1d: 55                      push   ebp
+1e: 56                      push   esi
+1f: 51                      push   ecx
+20: 57                      push   edi
+21: e8 fa fe fe fe          call   fefeff20 <_main+0xfefeff20>
+26: c3                      ret

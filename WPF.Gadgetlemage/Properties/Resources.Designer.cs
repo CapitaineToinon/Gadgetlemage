@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WPF.Gadgetlemage.Properties
-{
-
-
+namespace WPF.Gadgetlemage.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   Une classe de ressource fortement typée destinée, entre autres, à la consultation des chaînes localisées.
     /// </summary>
@@ -19,52 +19,82 @@ namespace WPF.Gadgetlemage.Properties
     // à l'aide d'un outil, tel que ResGen ou Visual Studio.
     // Pour ajouter ou supprimer un membre, modifiez votre fichier .ResX, puis réexécutez ResGen
     // avec l'option /str ou régénérez votre projet VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources
-    {
-
+    internal class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
-        {
+        internal Resources() {
         }
-
+        
         /// <summary>
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if ((resourceMan == null))
-                {
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WPF.Gadgetlemage.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Remplace la propriété CurrentUICulture du thread actuel pour toutes
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 0:  bf fe fe fe fe          mov    edi,0xfefefefe
+        ///5:  b9 fe fe fe fe          mov    ecx,0xfefefefe
+        ///a:  be fe fe fe fe          mov    esi,0xfefefefe
+        ///f:  bd fe fe fe fe          mov    ebp,0xfefefefe
+        ///14: bb ff ff ff ff          mov    ebx,0xffffffff
+        ///19: 6a 00                   push   0x0
+        ///1b: 6a 01                   push   0x1
+        ///1d: 55                      push   ebp
+        ///1e: 56                      push   esi
+        ///1f: 51                      push   ecx
+        ///20: 57                      push   edi
+        ///21: e8 fa fe fe f [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string PTDE {
+            get {
+                return ResourceManager.GetString("PTDE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 0:  ba fe fe fe fe          mov    edx,0xfefefefe
+        ///5:  41 b9 fe fe fe fe       mov    r9d,0xfefefefe
+        ///b:  41 b8 fe fe fe fe       mov    r8d,0xfefefefe
+        ///11: 41 bc fe fe fe fe       mov    r12d,0xfefefefe
+        ///17: 48 a1 fe fe fe fe fe    movabs rax,ds:0xfefefefefefefefe
+        ///1e: fe fe fe
+        ///21: c6 44 24 38 01          mov    BYTE PTR [rsp+0x38],0x1
+        ///26: 40 88 7c 24 30          mov    BYTE PTR [rsp+0x30],dil
+        ///2b: c6 44 24 28 01          mov    BYTE PTR [rsp+0x28],0x1
+        ///30: 4c 8b 78 10             mov    r15,QWORD PTR [r [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string REMASTERED {
+            get {
+                return ResourceManager.GetString("REMASTERED", resourceCulture);
             }
         }
     }
