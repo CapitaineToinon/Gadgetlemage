@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     /// <summary>
     /// Logique d'interaction pour App.xaml

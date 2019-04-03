@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     public struct InventoryItem
     {

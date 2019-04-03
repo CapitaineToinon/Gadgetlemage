@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using LowLevelHooking;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
@@ -79,7 +79,7 @@ namespace WPF.Gadgetlemage
 
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    btnCreate.IsEnabled = Hook.Loaded;
+                    btnCreate.IsEnabled = Hook.Hooked && Hook.Loaded;
 
                     bool auto = cbxAuto.IsChecked ?? false;
                     if (Hook.Hooked && Hook.Loaded && auto)
@@ -103,33 +103,28 @@ namespace WPF.Gadgetlemage
             RefreshThread = null;
             RefreshCancellationSource = null;
 
-            // Load defaults
-            cbxAuto.IsChecked = (bool)Properties.Settings.Default["Auto"];
-            cbxHotkey.IsChecked = (bool)Properties.Settings.Default["Hotkey"];
-            cbxConsume.IsChecked = (bool)Properties.Settings.Default["Consume"];
-            cbxSound.IsChecked = (bool)Properties.Settings.Default["Sound"];
-
-#if DEBUG
-            cbxAuto.IsChecked = false;
-            cbxHotkey.IsChecked = false;
-            cbxConsume.IsChecked = false;
-            cbxSound.IsChecked = false;
-#endif
-
             // Keyboard hook and hotkeys
             keyboardHook = new GlobalKeyboardHook();
             Hook = new DarkSoulsHook()
             {
-                RefreshInterval = 1000 / 30
+                RefreshInterval = 1000 / 30 // 30 times a second
             };
 
             // Get Item Hotkey
             createHotkey = new Hotkey("HotkeyCreate", GetItem);
 
+            // Load defaults
+            int selectedIndex = (int)Properties.Settings.Default["SelectedIndex"];
+            Hook.SelectedWeapon = Hook.Weapons[selectedIndex];
+            cbxAuto.IsChecked = (bool)Properties.Settings.Default["Auto"];
+            cbxHotkey.IsChecked = (bool)Properties.Settings.Default["Hotkey"];
+            cbxConsume.IsChecked = (bool)Properties.Settings.Default["Consume"];
+            cbxSound.IsChecked = (bool)Properties.Settings.Default["Sound"];
+
             // UI elements
             comboWeapons.Items.Clear();
             Hook.Weapons.ForEach(w => comboWeapons.Items.Add(w));
-            comboWeapons.SelectedIndex = 0;
+            comboWeapons.SelectedIndex = selectedIndex;
             comboWeapons.SelectionChanged += ComboWeapons_SelectionChanged;
 
             tbxHotkey.IsReadOnly = true;
@@ -188,11 +183,13 @@ namespace WPF.Gadgetlemage
             // Save settings
             createHotkey.Save();
 
+            int selectedIndex = comboWeapons.SelectedIndex;
             bool auto = cbxAuto.IsChecked ?? false;
             bool hotkeyEnabled = cbxHotkey.IsChecked ?? false;
             bool consume = cbxConsume.IsChecked ?? false;
             bool sound = cbxSound.IsChecked ?? false;
 
+            Properties.Settings.Default["SelectedIndex"] = selectedIndex;
             Properties.Settings.Default["Auto"] = auto;
             Properties.Settings.Default["Hotkey"] = hotkeyEnabled;
             Properties.Settings.Default["Consume"] = consume;

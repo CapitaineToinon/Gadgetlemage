@@ -1,4 +1,4 @@
-﻿namespace WPF.Gadgetlemage
+﻿namespace Gadgetlemage
 {
     public class Weapon
     {

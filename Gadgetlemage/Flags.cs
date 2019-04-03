@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     /// <summary>
     /// Flags magic

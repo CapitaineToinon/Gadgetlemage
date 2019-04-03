@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     public enum Version
     {
@@ -40,9 +40,11 @@ namespace WPF.Gadgetlemage
         private const string PTDEBasePtrAOB = "8B 0D ? ? ? ? 8B 7E 1C 8B 49 08 8B 46 20";
         private const string PTDEInventoryDataAOB = "A1 ? ? ? ? 53 55 8B 6C 24 10 56 8B 70 08 32 DB 85 F6";
         private const string PTDEFlagsAOB = "56 8B F1 8B 46 1C 50 A1 ? ? ? ? 32 C9";
+        private const string PTDEChrFollowCamAOB = "8B 15 ? ? ? ? F3 0F 10 44 24 30 52 E8 ? ? ? ? 8B 06 8B 50 2C 8B CE FF D2";
         private PHPointer PTDEBasePtr;
         private PHPointer PTDEInventoryData;
         private PHPointer PTDEFlags;
+        private PHPointer PTDEChrFollowCam;
         private uint PTDEInventoryIndexStart = 0x1B8;
         private uint PTDEFuncItemGetPtr = 0xC0B6DA;
 
@@ -105,7 +107,7 @@ namespace WPF.Gadgetlemage
             {
                 return (Version == Version.DarkSoulsRemastered)
                     ? (RemasterChrFollowCam.Resolve() != IntPtr.Zero)
-                    : true;
+                    : (PTDEChrFollowCam.Resolve() != IntPtr.Zero);
             }
         }
 
@@ -132,6 +134,7 @@ namespace WPF.Gadgetlemage
             PTDEBasePtr = RegisterAbsoluteAOB(PTDEBasePtrAOB, 2);
             PTDEInventoryData = RegisterAbsoluteAOB(PTDEInventoryDataAOB, 1);
             PTDEFlags = RegisterAbsoluteAOB(PTDEFlagsAOB, 8, 0, 0);
+            PTDEChrFollowCam = RegisterAbsoluteAOB(PTDEChrFollowCamAOB, 2, 0x4, 0x0);
 
             // Remastered Pointers
             RemasterBasePtr = RegisterRelativeAOB(RemasterBasePtrAOB, 3, 7);

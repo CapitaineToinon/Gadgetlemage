@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     internal static class User32
     {

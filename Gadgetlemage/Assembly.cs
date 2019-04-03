@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     public static class Assembly
     {

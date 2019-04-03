@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WPF.Gadgetlemage.Properties {
+namespace Gadgetlemage.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -80,6 +80,18 @@ namespace WPF.Gadgetlemage.Properties {
             }
             set {
                 this["Auto"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedIndex {
+            get {
+                return ((int)(this["SelectedIndex"]));
+            }
+            set {
+                this["SelectedIndex"] = value;
             }
         }
     }

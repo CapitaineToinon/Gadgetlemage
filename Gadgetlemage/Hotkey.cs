@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using LowLevelHooking;
 
-namespace WPF.Gadgetlemage
+namespace Gadgetlemage
 {
     public class Hotkey
     {
