@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Gadgetlemage.DarkSouls;
 using LowLevelHooking;
 
 namespace Gadgetlemage
@@ -14,10 +15,15 @@ namespace Gadgetlemage
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// Constants
+        /// </summary>
+        private const int THREAD_REFRESH_RATE = 1000 / 30;
+
+        /// <summary>
         /// PHook where all the magic happens
         /// https://github.com/JKAnderson/PropertyHook
         /// </summary>
-        private DarkSoulsHook Hook { get; set; }
+        private Model Model { get; set; }
 
         /// <summary>
         /// Hotkey
@@ -31,6 +37,9 @@ namespace Gadgetlemage
         private Thread RefreshThread;
         private CancellationTokenSource RefreshCancellationSource;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -75,111 +84,29 @@ namespace Gadgetlemage
         {
             while (!ct.IsCancellationRequested)
             {
-                Hook.Refresh();
+                Model.Refresh();
 
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    btnCreate.IsEnabled = Hook.Hooked && Hook.Loaded;
+                    btnCreate.IsEnabled = Model.Hooked && Model.Loaded;
 
+                    // Automatically creates the weapon if needed
                     bool auto = cbxAuto.IsChecked ?? false;
-                    if (Hook.Hooked && Hook.Loaded && auto)
+                    if (Model.Hooked && Model.Loaded && auto)
                     {
-                        Hook.AutomaticallyGetItem();
+                        Model.AutomaticallyGetItem();
                     }
                 }));
 
-                Thread.Sleep(Hook.RefreshInterval);
+                Thread.Sleep(Model.RefreshInterval);
             }
         }
 
         /// <summary>
-        /// On Load
+        /// Save the settings
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        public void SaveSettings()
         {
-            // threds
-            RefreshThread = null;
-            RefreshCancellationSource = null;
-
-            // Keyboard hook and hotkeys
-            keyboardHook = new GlobalKeyboardHook();
-            Hook = new DarkSoulsHook()
-            {
-                RefreshInterval = 1000 / 30 // 30 times a second
-            };
-
-            // Get Item Hotkey
-            createHotkey = new Hotkey("HotkeyCreate", GetItem);
-
-            // Load defaults
-            int selectedIndex = (int)Properties.Settings.Default["SelectedIndex"];
-            Hook.SelectedWeapon = Hook.Weapons[selectedIndex];
-            cbxAuto.IsChecked = (bool)Properties.Settings.Default["Auto"];
-            cbxHotkey.IsChecked = (bool)Properties.Settings.Default["Hotkey"];
-            cbxConsume.IsChecked = (bool)Properties.Settings.Default["Consume"];
-            cbxSound.IsChecked = (bool)Properties.Settings.Default["Sound"];
-
-            // UI elements
-            comboWeapons.Items.Clear();
-            Hook.Weapons.ForEach(w => comboWeapons.Items.Add(w));
-            comboWeapons.SelectedIndex = selectedIndex;
-            comboWeapons.SelectionChanged += ComboWeapons_SelectionChanged;
-
-            tbxHotkey.IsReadOnly = true;
-            tbxHotkey.Text = createHotkey.ToString();
-
-            btnCreate.IsEnabled = false;
-
-            // Events
-            keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_ListenHotkey;
-
-            Hook.OnItemAcquired += Hook_OnItemAcquired;
-            Hook.OnHooked += Hook_OnHookedUnHook;
-            Hook.OnUnhooked += Hook_OnHookedUnHook;
-
-            btnCreate.Click += BtnCreate_Click;
-            btnHotkey.Click += BtnHotkey_Click;
-
-            // Start the main hook
-            Start();
-        }
-
-        private void Hook_OnHookedUnHook(object sender, PropertyHook.PHEventArgs e)
-        {
-            Dispatcher.Invoke(new Action(() =>
-            {
-                btnCreate.IsEnabled = Hook.Hooked;
-            }));
-        }
-
-        /// <summary>
-        /// Plays a sound if needed when item acquired
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Hook_OnItemAcquired(object sender, EventArgs e)
-        {
-            Dispatcher.Invoke(new Action(() =>
-            {
-                bool sound = cbxSound.IsChecked != null && cbxSound.IsChecked == true;
-
-                if (sound)
-                    Console.Beep();
-            }));
-        }
-
-        /// <summary>
-        /// Form Closed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            // Stop the thread
-            Stop();
-
             // Save settings
             createHotkey.Save();
 
@@ -194,8 +121,115 @@ namespace Gadgetlemage
             Properties.Settings.Default["Hotkey"] = hotkeyEnabled;
             Properties.Settings.Default["Consume"] = consume;
             Properties.Settings.Default["Sound"] = sound;
-
             Properties.Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// On Load
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            /**
+             * Keyboard hook and Model
+             */
+            Model = new Model()
+            {
+                RefreshInterval = THREAD_REFRESH_RATE,
+            };
+            keyboardHook = new GlobalKeyboardHook();
+
+            /**
+             * Thread
+             */
+            RefreshThread = null;
+            RefreshCancellationSource = null;
+
+            /**
+             * Init Hotkeys
+             */
+            createHotkey = new Hotkey("HotkeyCreate", () =>
+            {
+                if (Model.Focused)
+                {
+                    Model.CreateWeapon();
+                }
+            });
+
+            /**
+             * Init UI
+             */
+            int selectedIndex = (int)Properties.Settings.Default["SelectedIndex"];
+            Model.SetSelectedWeapon(Model.Weapons[selectedIndex]);
+            cbxAuto.IsChecked = (bool)Properties.Settings.Default["Auto"];
+            cbxHotkey.IsChecked = (bool)Properties.Settings.Default["Hotkey"];
+            cbxConsume.IsChecked = (bool)Properties.Settings.Default["Consume"];
+            cbxSound.IsChecked = (bool)Properties.Settings.Default["Sound"];
+            comboWeapons.Items.Clear();
+            Model.Weapons.ForEach(w => comboWeapons.Items.Add(w));
+            comboWeapons.SelectedIndex = selectedIndex;
+            comboWeapons.SelectionChanged += ComboWeapons_SelectionChanged;
+            tbxHotkey.IsReadOnly = true;
+            tbxHotkey.Text = createHotkey.ToString();
+            btnCreate.IsEnabled = false;
+
+            /**
+             * Events
+             */
+            keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_ListenHotkey;
+            Model.OnItemAcquired += Hook_OnItemAcquired;
+            Model.OnHooked += Hook_OnHookedUnHook;
+            Model.OnUnhooked += Hook_OnHookedUnHook;
+            btnCreate.Click += BtnCreate_Click;
+            btnHotkey.Click += BtnHotkey_Click;
+
+            /**
+             * Start the main thread
+             */
+            Start();
+        }
+
+        /// <summary>
+        /// Form Closed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Stop();
+            SaveSettings();
+        }
+
+        /// <summary>
+        /// Model Hook/Unhook event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Hook_OnHookedUnHook(object sender, PropertyHook.PHEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                btnCreate.IsEnabled = Model.Hooked;
+            }));
+        }
+
+        /// <summary>
+        /// Plays a sound if needed when item acquired
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Hook_OnItemAcquired(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                bool sound = cbxSound.IsChecked ?? false;
+
+                if (sound)
+                {
+                    Console.Beep();
+                }
+            }));
         }
 
         /// <summary>
@@ -207,7 +241,8 @@ namespace Gadgetlemage
         {
             bool hotkeyEnabled = cbxHotkey.IsChecked ?? false;
             bool consume = cbxConsume.IsChecked ?? false;
-            if (!e.IsUp && hotkeyEnabled && Hook.Focused)
+
+            if (!e.IsUp && hotkeyEnabled)
             {
                 if (createHotkey.Trigger(e.KeyCode) && consume)
                 {
@@ -245,17 +280,17 @@ namespace Gadgetlemage
         /// <param name="e"></param>
         private void ComboWeapons_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Hook.SelectedWeapon = (Weapon)comboWeapons.SelectedItem;
+            Model.SetSelectedWeapon((BlackKnightWeapon)comboWeapons.SelectedItem);
         }
 
         /// <summary>
-        /// Manually create an item
+        /// Manually create a weapon
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
-            GetItem();
+            Model.CreateWeapon();
         }
 
         /// <summary>
@@ -271,17 +306,6 @@ namespace Gadgetlemage
             // Swap the GlobalKeyboardHook events
             keyboardHook.KeyDownOrUp -= KeyboardHook_KeyDownOrUp_ListenHotkey;
             keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_SetupHotkey;
-        }
-
-        /// <summary>
-        /// Get the Selected Item
-        /// </summary>
-        public void GetItem()
-        {
-            if (Hook.Hooked && Hook.Loaded)
-            {
-                Hook.GetItem();
-            }
         }
 
         /// <summary>

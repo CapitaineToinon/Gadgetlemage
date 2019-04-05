@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Gadgetlemage
+namespace Gadgetlemage.DarkSouls
 {
     internal static class User32
     {

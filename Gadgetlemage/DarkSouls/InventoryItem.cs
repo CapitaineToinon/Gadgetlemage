@@ -1,21 +1,15 @@
 ﻿using System;
 
-namespace Gadgetlemage
+namespace Gadgetlemage.DarkSouls
 {
     public struct InventoryItem
     {
         public int Category { get; }
-
         public int ID { get; }
-
         public int Quantity { get; }
-
         public int Unk0C { get; }
-
         public int Unk10 { get; }
-
         public int Durability { get; }
-
         public int Unk18 { get; }
 
         public InventoryItem(byte[] bytes, int index)

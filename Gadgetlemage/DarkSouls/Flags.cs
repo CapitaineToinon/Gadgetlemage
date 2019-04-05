@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gadgetlemage
+namespace Gadgetlemage.DarkSouls
 {
     /// <summary>
     /// Flags magic
