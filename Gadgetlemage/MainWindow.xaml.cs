@@ -282,28 +282,6 @@ namespace Gadgetlemage
         }
 
         /// <summary>
-        /// GlobalKeyboardHook event used to listen for a new hotkey
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void KeyboardHook_KeyDownOrUp_SetupHotkey(object sender, GlobalKeyboardHookEventArgs e)
-        {
-            //// Only on KeyDown, if process has focus and is loaded
-            //if (!e.IsUp)
-            //{
-            //    createHotkey.Key = (VirtualKey)e.KeyCode;
-            //    tbxCreateHotkey.Text = createHotkey.ToString();
-            //    btnCreateHotkey.IsEnabled = true;
-            //    btnCreateHotkey.Content = "Change Hotkey";
-            //    e.Handled = true;
-
-            //    // Swap the GlobalKeyboardHook events
-            //    keyboardHook.KeyDownOrUp -= KeyboardHook_KeyDownOrUp_SetupHotkey;
-            //    keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_ListenHotkey;
-            //}
-        }
-
-        /// <summary>
         /// Selected Weapon Changed
         /// </summary>
         /// <param name="sender"></param>
