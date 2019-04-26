@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using PropertyHook;
 
 namespace Gadgetlemage.DarkSouls
@@ -58,9 +59,10 @@ namespace Gadgetlemage.DarkSouls
         /// Returns true if the SelectedWeapon is already in the player's inventory
         /// </summary>
         /// <returns>bool</returns>
-        public bool ItemIsInPlayersInventory(BlackKnightWeapon weapon)
+        public bool FindBlackKnightWeapon(BlackKnightWeapon weapon)
         {
-            InventoryItem[] items = GetInventoryItems();
+            InventoryItem[] items = GetInventoryItems()
+                .Where(i => i.ID != 0 && i.ID != -1).ToArray();
 
             bool alreadyOwn = false;
             for (int i = 0; i < items.Length; i++)
@@ -129,5 +131,10 @@ namespace Gadgetlemage.DarkSouls
         /// </summary>
         public abstract void CreateWeapon(BlackKnightWeapon weapon);
 
+        /// <summary>
+        /// Removes a weapon from the player's inventory
+        /// </summary>
+        /// <param name="weapon"></param>
+        public abstract void DeleteItem(BlackKnightWeapon weapon);
     }
 }

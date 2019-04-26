@@ -14,11 +14,17 @@
     <Setting Name="Sound" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Auto" Type="System.Boolean" Scope="User">
+    <Setting Name="AutoCreate" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SelectedIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="AutoDelete" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HotkeyDelete" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">27</Value>
     </Setting>
   </Settings>
 </SettingsFile>

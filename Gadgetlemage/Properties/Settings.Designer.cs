@@ -74,12 +74,12 @@ namespace Gadgetlemage.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Auto {
+        public bool AutoCreate {
             get {
-                return ((bool)(this["Auto"]));
+                return ((bool)(this["AutoCreate"]));
             }
             set {
-                this["Auto"] = value;
+                this["AutoCreate"] = value;
             }
         }
         
@@ -92,6 +92,30 @@ namespace Gadgetlemage.Properties {
             }
             set {
                 this["SelectedIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoDelete {
+            get {
+                return ((bool)(this["AutoDelete"]));
+            }
+            set {
+                this["AutoDelete"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("27")]
+        public int HotkeyDelete {
+            get {
+                return ((int)(this["HotkeyDelete"]));
+            }
+            set {
+                this["HotkeyDelete"] = value;
             }
         }
     }

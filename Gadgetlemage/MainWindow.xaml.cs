@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
@@ -29,7 +30,7 @@ namespace Gadgetlemage
         /// Hotkey
         /// </summary>
         private GlobalKeyboardHook keyboardHook;
-        private Hotkey createHotkey;
+        private List<Hotkey> hotkeys = new List<Hotkey>();
 
         /// <summary>
         /// Threads
@@ -43,6 +44,12 @@ namespace Gadgetlemage
         public MainWindow()
         {
             InitializeComponent();
+
+
+
+            // display version
+            this.Title = $"Gadgetlemage ({getRunningVersion()})";
+
             this.Loaded += MainWindow_Loaded;
             this.Closed += MainWindow_Closed;
         }
@@ -91,11 +98,19 @@ namespace Gadgetlemage
                     btnCreate.IsEnabled = Model.Hooked && Model.Loaded;
 
                     // Automatically creates the weapon if needed
-                    bool auto = cbxAuto.IsChecked ?? false;
-                    if (Model.Hooked && Model.Loaded && auto)
+                    bool autoCreate = cbxAutoCreate.IsChecked ?? false;
+                    if (Model.Hooked && Model.Loaded && autoCreate)
                     {
-                        Model.AutomaticallyGetItem();
+                        Model.AutomaticallyCreateWeapon();
                     }
+
+                    // Automatically delete the shield if needed
+                    bool autoDelete = cbxAutoDelete.IsChecked ?? false;
+                    if (Model.Hooked && Model.Loaded && autoDelete)
+                    {
+                        Model.AutomaticallyRemoveShield();
+                    }
+
                 }));
 
                 Thread.Sleep(Model.RefreshInterval);
@@ -108,16 +123,18 @@ namespace Gadgetlemage
         public void SaveSettings()
         {
             // Save settings
-            createHotkey.Save();
+            hotkeys.ForEach(hotkey => hotkey.Save());
 
             int selectedIndex = comboWeapons.SelectedIndex;
-            bool auto = cbxAuto.IsChecked ?? false;
+            bool autoCreate = cbxAutoCreate.IsChecked ?? false;
+            bool autoDelete = cbxAutoDelete.IsChecked ?? false;
             bool hotkeyEnabled = cbxHotkey.IsChecked ?? false;
             bool consume = cbxConsume.IsChecked ?? false;
             bool sound = cbxSound.IsChecked ?? false;
 
             Properties.Settings.Default["SelectedIndex"] = selectedIndex;
-            Properties.Settings.Default["Auto"] = auto;
+            Properties.Settings.Default["AutoCreate"] = autoCreate;
+            Properties.Settings.Default["AutoDelete"] = autoDelete;
             Properties.Settings.Default["Hotkey"] = hotkeyEnabled;
             Properties.Settings.Default["Consume"] = consume;
             Properties.Settings.Default["Sound"] = sound;
@@ -131,6 +148,12 @@ namespace Gadgetlemage
         /// <param name="e"></param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+#if DEBUG
+            btnDebug.Visibility = Visibility.Visible;
+            btnDebug.Click += BtnDebug_Click;
+#else
+            btnDebug.Visibility = Visibility.Hidden;
+#endif
             /**
              * Keyboard hook and Model
              */
@@ -149,20 +172,28 @@ namespace Gadgetlemage
             /**
              * Init Hotkeys
              */
-            createHotkey = new Hotkey("HotkeyCreate", () =>
+            hotkeys.Add(new Hotkey("HotkeyCreate", keyboardHook, tbxCreateHotkey, btnCreateHotkey, () =>
             {
-                if (Model.Focused)
+                if (Model.Hooked && Model.Focused)
                 {
                     Model.CreateWeapon();
                 }
-            });
+            }));
+            hotkeys.Add(new Hotkey("HotkeyDelete", keyboardHook, tbxDeleteHotkey, btnDeleteHotkey, () =>
+            {
+                if (Model.Hooked && Model.Focused)
+                {
+                    Model.DeleteShield();
+                }
+            }));
 
             /**
              * Init UI
              */
             int selectedIndex = (int)Properties.Settings.Default["SelectedIndex"];
             Model.SetSelectedWeapon(Model.Weapons[selectedIndex]);
-            cbxAuto.IsChecked = (bool)Properties.Settings.Default["Auto"];
+            cbxAutoCreate.IsChecked = (bool)Properties.Settings.Default["AutoCreate"];
+            cbxAutoDelete.IsChecked = (bool)Properties.Settings.Default["AutoDelete"];
             cbxHotkey.IsChecked = (bool)Properties.Settings.Default["Hotkey"];
             cbxConsume.IsChecked = (bool)Properties.Settings.Default["Consume"];
             cbxSound.IsChecked = (bool)Properties.Settings.Default["Sound"];
@@ -170,8 +201,6 @@ namespace Gadgetlemage
             Model.Weapons.ForEach(w => comboWeapons.Items.Add(w));
             comboWeapons.SelectedIndex = selectedIndex;
             comboWeapons.SelectionChanged += ComboWeapons_SelectionChanged;
-            tbxHotkey.IsReadOnly = true;
-            tbxHotkey.Text = createHotkey.ToString();
             btnCreate.IsEnabled = false;
 
             /**
@@ -181,8 +210,6 @@ namespace Gadgetlemage
             Model.OnItemAcquired += Hook_OnItemAcquired;
             Model.OnHooked += Hook_OnHookedUnHook;
             Model.OnUnhooked += Hook_OnHookedUnHook;
-            btnCreate.Click += BtnCreate_Click;
-            btnHotkey.Click += BtnHotkey_Click;
 
             /**
              * Start the main thread
@@ -244,9 +271,12 @@ namespace Gadgetlemage
 
             if (!e.IsUp && hotkeyEnabled)
             {
-                if (createHotkey.Trigger(e.KeyCode) && consume)
+                foreach (Hotkey hotkey in hotkeys)
                 {
-                    e.Handled = true;
+                    if (hotkey.Trigger(e.KeyCode) && consume)
+                    {
+                        e.Handled = true;
+                    }
                 }
             }
         }
@@ -258,19 +288,19 @@ namespace Gadgetlemage
         /// <param name="e"></param>
         private void KeyboardHook_KeyDownOrUp_SetupHotkey(object sender, GlobalKeyboardHookEventArgs e)
         {
-            // Only on KeyDown, if process has focus and is loaded
-            if (!e.IsUp)
-            {
-                createHotkey.Key = (VirtualKey)e.KeyCode;
-                tbxHotkey.Text = createHotkey.ToString();
-                btnHotkey.IsEnabled = true;
-                btnHotkey.Content = "Change Hotkey";
-                e.Handled = true;
+            //// Only on KeyDown, if process has focus and is loaded
+            //if (!e.IsUp)
+            //{
+            //    createHotkey.Key = (VirtualKey)e.KeyCode;
+            //    tbxCreateHotkey.Text = createHotkey.ToString();
+            //    btnCreateHotkey.IsEnabled = true;
+            //    btnCreateHotkey.Content = "Change Hotkey";
+            //    e.Handled = true;
 
-                // Swap the GlobalKeyboardHook events
-                keyboardHook.KeyDownOrUp -= KeyboardHook_KeyDownOrUp_SetupHotkey;
-                keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_ListenHotkey;
-            }
+            //    // Swap the GlobalKeyboardHook events
+            //    keyboardHook.KeyDownOrUp -= KeyboardHook_KeyDownOrUp_SetupHotkey;
+            //    keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_ListenHotkey;
+            //}
         }
 
         /// <summary>
@@ -294,21 +324,6 @@ namespace Gadgetlemage
         }
 
         /// <summary>
-        /// Listening for a new hotkey
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnHotkey_Click(object sender, RoutedEventArgs e)
-        {
-            btnHotkey.IsEnabled = false;
-            btnHotkey.Content = "Listening...";
-
-            // Swap the GlobalKeyboardHook events
-            keyboardHook.KeyDownOrUp -= KeyboardHook_KeyDownOrUp_ListenHotkey;
-            keyboardHook.KeyDownOrUp += KeyboardHook_KeyDownOrUp_SetupHotkey;
-        }
-
-        /// <summary>
         /// Open Github
         /// </summary>
         /// <param name="sender"></param>
@@ -318,5 +333,27 @@ namespace Gadgetlemage
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        /// <summary>
+        /// Build version
+        /// </summary>
+        /// <returns></returns>
+        private Version getRunningVersion()
+        {
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        }
+
+#if DEBUG
+        /// <summary>
+        /// Debug method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnDebug_Click(object sender, RoutedEventArgs e)
+        {
+            // Try things here
+            Model.Debug();
+        }
+#endif
     }
 }

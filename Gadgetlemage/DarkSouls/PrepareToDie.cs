@@ -98,5 +98,30 @@ namespace Gadgetlemage.DarkSouls
             return result;
         }
 
+        /// <summary>
+        /// Removes a weapon from the player's inventory
+        /// </summary>
+        /// <param name="weapon"></param>
+        public override void DeleteItem(BlackKnightWeapon weapon)
+        {
+            InventoryItem[] result = new InventoryItem[0];
+
+            if (Process.Hooked)
+            {
+                result = new InventoryItem[2048];
+                IntPtr pointer = pInventoryData.Resolve();
+                PHPointer pInventory = Process.CreateChildPointer(pInventoryData, 0, 8, 0x2DC);
+                byte[] bytes = pInventory.ReadBytes(0, 2048 * 0x1C);
+
+                for (int i = 0; i < 2048; i++)
+                {
+                    result[i] = new InventoryItem(bytes, i * 0x1C);
+                    if (result[i].Category == weapon.Category && result[i].ID == weapon.ID)
+                    {
+                        pInventory.WriteBytes(i * 0x1C, new byte[0x1C]);
+                    }
+                }
+            }
+        }
     }
 }

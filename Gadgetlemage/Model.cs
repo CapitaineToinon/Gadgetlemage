@@ -41,6 +41,11 @@ namespace Gadgetlemage
         public bool WeaponCreated { get; set; }
 
         /// <summary>
+        /// Whether or not the shield was deleted
+        /// </summary>
+        public bool ShieldDeleted { get; set; }
+
+        /// <summary>
         /// List of all available black knight weapons
         /// </summary>
         public List<BlackKnightWeapon> Weapons { get; set; }
@@ -133,6 +138,9 @@ namespace Gadgetlemage
 
             OnHooked += DarkSoulsProcess_OnHooked;
             OnUnhooked += DarkSoulsProcess_OnUnhooked;
+
+            WeaponCreated = true;
+            ShieldDeleted = true;
         }
 
         /// <summary>
@@ -142,7 +150,7 @@ namespace Gadgetlemage
         /// <param name="e"></param>
         private void DarkSoulsProcess_OnHooked(object sender, PHEventArgs e)
         {
-            switch(Version)
+            switch (Version)
             {
                 case GameVersion.PrepareToDie:
                     DarkSouls = new PrepareToDie(this);
@@ -167,8 +175,7 @@ namespace Gadgetlemage
         }
 
         /// <summary>
-        /// Main GetItem that will call the correct GetItem
-        /// For PTDE or Remastered
+        /// Creates the currently selected weapon
         /// </summary>
         public void CreateWeapon()
         {
@@ -179,15 +186,89 @@ namespace Gadgetlemage
             }
         }
 
+        /// <summary>
+        /// Delete the black knight shield
+        /// </summary>
+        public void DeleteShield()
+        {
+            if (Ready)
+            {
+                DarkSouls.DeleteItem(BlackKnightShield);
+            }
+        }
+
+        /// <summary>
+        /// Automatically delete the shield from the player's inventory
+        /// </summary>
+        public void AutomaticallyRemoveShield()
+        {
+            if (Ready)
+            {
+                bool alreadyOwns = DarkSouls.FindBlackKnightWeapon(BlackKnightShield);
+                bool IsBlackKnightDead = SelectedWeapon.IsConditionSatisfied();
+
+                /**
+                 * If the black knight is still alive, we reset the state of the Weapon
+                 */
+                if (!IsBlackKnightDead)
+                {
+                    ShieldDeleted = false;
+                }
+                // else the black knight is dead...
+                else
+                {
+                    if (alreadyOwns)
+                    {
+                        if (!ShieldDeleted)
+                        {
+                            /**
+                             * If the black knight is dead and the player has the shield
+                             * so we need to delete it
+                             */
+                            DeleteShield();
+                            ShieldDeleted = true;
+                        }
+                        else
+                        {
+                            /**
+                             * If the black knight is dead but the player still has the
+                             * shield. Maybe another black knight dropped one so we don't
+                             * do anything
+                             */
+                            // Nothing to do here
+                        }
+                    }
+                    else
+                    {
+                        if (!ShieldDeleted)
+                        {
+                            /**
+                             * The black knight is dead and we didn't delete the shield.
+                             * Hence it didn't drop so we don't need to delete anything
+                             */
+                            ShieldDeleted = true;
+                        }
+                        else
+                        {
+                            /**
+                             * The black knight is dead, the player doesn't have the shield
+                             * and we already removed it from the inventory. Everything's
+                             * good
+                             */
+                            // Nothing to do here
+                        }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Automatically Get the item if needed
         /// </summary>
-        public void AutomaticallyGetItem()
+        public void AutomaticallyCreateWeapon()
         {
             if (Ready)
             {
-                bool alreadyOwns = DarkSouls.ItemIsInPlayersInventory(SelectedWeapon);
                 bool IsBlackKnightDead = SelectedWeapon.IsConditionSatisfied();
 
                 /**
@@ -200,6 +281,8 @@ namespace Gadgetlemage
                 // else the black knight is dead...
                 else
                 {
+                    bool alreadyOwns = DarkSouls.FindBlackKnightWeapon(SelectedWeapon);
+
                     if (alreadyOwns)
                     {
                         if (!WeaponCreated)
@@ -254,5 +337,12 @@ namespace Gadgetlemage
         {
             SelectedWeapon = weapon;
         }
+
+#if DEBUG
+        public void Debug()
+        {
+            bool alreadyOwns = DarkSouls.FindBlackKnightWeapon(SelectedWeapon);
+        }
+#endif
     }
 }
