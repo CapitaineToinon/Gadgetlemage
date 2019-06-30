@@ -45,8 +45,6 @@ namespace Gadgetlemage
         {
             InitializeComponent();
 
-
-
             // display version
             this.Title = $"Gadgetlemage ({getRunningVersion()})";
 
@@ -157,10 +155,7 @@ namespace Gadgetlemage
             /**
              * Keyboard hook and Model
              */
-            Model = new Model()
-            {
-                RefreshInterval = THREAD_REFRESH_RATE,
-            };
+            Model = new Model();
             keyboardHook = new GlobalKeyboardHook();
 
             /**

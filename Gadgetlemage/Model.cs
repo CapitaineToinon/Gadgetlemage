@@ -13,7 +13,8 @@ namespace Gadgetlemage
         /// </summary>
         private const string PTDE_NAME = "DARKSOULS";
         private const string REMASTERED_NAME = "DARK SOULS™: REMASTERED";
-        private const int REFRESH_INTERVAL = 1000;
+        private const int UNHOOKED_INTERVAL = 1000;
+        private const int HOOKED_INTERVAL = 33;
         private const int MIN_LIFE_SPAN = 5000;
 
         /// <summary>
@@ -67,6 +68,14 @@ namespace Gadgetlemage
             }
         }
 
+        new public int RefreshInterval
+        {
+            get
+            {
+                return (Hooked) ? HOOKED_INTERVAL : UNHOOKED_INTERVAL;     
+            }
+        }
+
         /// <summary>
         /// If the process is ready (Hook and Dark Souls is not null)
         /// </summary>
@@ -114,7 +123,7 @@ namespace Gadgetlemage
         /// <summary>
         /// Constructor
         /// </summary>
-        public Model() : base(REFRESH_INTERVAL, MIN_LIFE_SPAN, processSelector)
+        public Model() : base(0, MIN_LIFE_SPAN, processSelector) // RefreshInterval at 0 because manually refreshed from the outside
         {
             Weapons = new List<BlackKnightWeapon>()
             {
