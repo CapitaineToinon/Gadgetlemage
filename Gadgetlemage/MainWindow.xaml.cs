@@ -93,22 +93,31 @@ namespace Gadgetlemage
 
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    btnCreate.IsEnabled = Model.Hooked && Model.Loaded;
-
-                    // Automatically creates the weapon if needed
-                    bool autoCreate = cbxAutoCreate.IsChecked ?? false;
-                    if (Model.Hooked && Model.Loaded && autoCreate)
+                    if (Model.Hooked && Model.Loaded)
                     {
-                        Model.AutomaticallyCreateWeapon();
+                        btnCreate.IsEnabled = true;
+                        // Automatically creates the weapon if needed
+                        if (cbxAutoCreate.IsChecked ?? false)
+                        {
+                            Model.AutomaticallyCreateWeapon();
+                        }
+                        
+                        // Automatically delete the shield if needed
+                        if (cbxAutoDelete.IsChecked ?? false)
+                        {
+                            Model.AutomaticallyRemoveShield();
+                        }
+                        
+                        // Stop searching once the associated Black Knight dies
+                        if (Model.SelectedWeapon.IsConditionSatisfied())
+                        {
+                            ct.IsCancellationRequested = true;
+                        }
                     }
-
-                    // Automatically delete the shield if needed
-                    bool autoDelete = cbxAutoDelete.IsChecked ?? false;
-                    if (Model.Hooked && Model.Loaded && autoDelete)
+                    else
                     {
-                        Model.AutomaticallyRemoveShield();
+                        btnCreate.IsEnabled = false;
                     }
-
                 }));
 
                 Thread.Sleep(Model.RefreshInterval);
