@@ -95,20 +95,10 @@ namespace Gadgetlemage
                 {
                     btnCreate.IsEnabled = Model.Hooked && Model.Loaded;
 
-                    // Automatically creates the weapon if needed
-                    bool autoCreate = cbxAutoCreate.IsChecked ?? false;
-                    if (Model.Hooked && Model.Loaded && autoCreate)
-                    {
-                        Model.AutomaticallyCreateWeapon();
-                    }
+                    bool createWeapon = cbxAutoCreate.IsChecked ?? false;
+                    bool deleteShield = cbxAutoDelete.IsChecked ?? false;
 
-                    // Automatically delete the shield if needed
-                    bool autoDelete = cbxAutoDelete.IsChecked ?? false;
-                    if (Model.Hooked && Model.Loaded && autoDelete)
-                    {
-                        Model.AutomaticallyRemoveShield();
-                    }
-
+                    Model.UpdateLoop(createWeapon, deleteShield);
                 }));
 
                 Thread.Sleep(Model.RefreshInterval);
