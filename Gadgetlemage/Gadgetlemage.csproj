@@ -68,7 +68,7 @@
       <HintPath>..\packages\LowLevelHooking.1.0.1\lib\net20\LowLevelHooking.dll</HintPath>
     </Reference>
     <Reference Include="PropertyHook">
-      <HintPath>..\..\PropertyHook\PropertyHook.dll</HintPath>
+      <HintPath>..\..\PropertyHook\PropertyHook\bin\Release\PropertyHook.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -152,6 +152,18 @@
   <ItemGroup>
     <Resource Include="Resources\PTDE.txt" />
     <Resource Include="Resources\REMASTERED.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 et x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.0.2\build\Fody.targets" Condition="Exists('..\packages\Fody.4.0.2\build\Fody.targets')" />
