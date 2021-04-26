@@ -193,6 +193,8 @@ namespace Gadgetlemage
             {
                 DarkSouls.CreateWeapon(SelectedWeapon);
                 OnItemAcquired?.Invoke(this, EventArgs.Empty);
+
+                
             }
         }
 
@@ -233,6 +235,14 @@ namespace Gadgetlemage
                 }
 
                 /**
+                 * If the black knight is still alive clear image.
+                 */
+                if (IsBlackKnightAlive)
+                {
+                    Image.clearImage();
+                }
+
+                /**
                  * Only run logic when the black is dead and only run that logic once,
                  * until the black knight is alive again
                  */ 
@@ -250,7 +260,16 @@ namespace Gadgetlemage
                              * weapon and we didn't already gave it, then we give it 
                              */
                             CreateWeapon();
+                        } 
+                        /**
+                         * If we obtained weapon through game change destination image to 
+                         * image used for automatic weapon creation.
+                         */
+                        else
+                        {
+                            Image.changeToAutomaticImage();
                         }
+
                     }
 
                     // shield
@@ -288,7 +307,7 @@ namespace Gadgetlemage
 #if DEBUG
         public void Debug()
         {
-            bool alreadyOwns = DarkSouls.FindBlackKnightWeapon(SelectedWeapon);
+            //bool alreadyOwns = DarkSouls.FindBlackKnightWeapon(SelectedWeapon);
         }
 #endif
     }

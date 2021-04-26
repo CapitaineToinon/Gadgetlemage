@@ -15,6 +15,7 @@ namespace Gadgetlemage
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SettingWindow settingWindow = new SettingWindow();
         /// <summary>
         /// Constants
         /// </summary>
@@ -119,13 +120,15 @@ namespace Gadgetlemage
             bool hotkeyEnabled = cbxHotkey.IsChecked ?? false;
             bool consume = cbxConsume.IsChecked ?? false;
             bool sound = cbxSound.IsChecked ?? false;
+            bool image = cbxImage.IsChecked ?? false;
 
-            Properties.Settings.Default["SelectedIndex"] = selectedIndex;
-            Properties.Settings.Default["AutoCreate"] = autoCreate;
-            Properties.Settings.Default["AutoDelete"] = autoDelete;
-            Properties.Settings.Default["Hotkey"] = hotkeyEnabled;
-            Properties.Settings.Default["Consume"] = consume;
-            Properties.Settings.Default["Sound"] = sound;
+            Properties.Settings.Default.SelectedIndex = selectedIndex;
+            Properties.Settings.Default.AutoCreate = autoCreate;
+            Properties.Settings.Default.AutoDelete = autoDelete;
+            Properties.Settings.Default.Hotkey = hotkeyEnabled;
+            Properties.Settings.Default.Consume = consume;
+            Properties.Settings.Default.Sound = sound;
+            Properties.Settings.Default.Image = image;
             Properties.Settings.Default.Save();
         }
 
@@ -157,31 +160,36 @@ namespace Gadgetlemage
             /**
              * Init Hotkeys
              */
-            hotkeys.Add(new Hotkey("HotkeyCreate", keyboardHook, tbxCreateHotkey, btnCreateHotkey, () =>
+            
+            hotkeys.Add(new Hotkey("HotkeyCreate", keyboardHook, settingWindow.tbxCreateHotkey, settingWindow.btnCreateHotkey, () =>
             {
                 if (Model.Hooked && Model.Focused)
                 {
                     Model.CreateWeapon();
                 }
             }));
-            hotkeys.Add(new Hotkey("HotkeyDelete", keyboardHook, tbxDeleteHotkey, btnDeleteHotkey, () =>
+            hotkeys.Add(new Hotkey("HotkeyDelete", keyboardHook, settingWindow.tbxDeleteHotkey, settingWindow.btnDeleteHotkey, () =>
             {
                 if (Model.Hooked && Model.Focused)
                 {
                     Model.DeleteShield();
                 }
             }));
+            
 
             /**
              * Init UI
              */
-            int selectedIndex = (int)Properties.Settings.Default["SelectedIndex"];
+            int selectedIndex = Properties.Settings.Default.SelectedIndex;
             Model.SetSelectedWeapon(Model.Weapons[selectedIndex]);
-            cbxAutoCreate.IsChecked = (bool)Properties.Settings.Default["AutoCreate"];
-            cbxAutoDelete.IsChecked = (bool)Properties.Settings.Default["AutoDelete"];
-            cbxHotkey.IsChecked = (bool)Properties.Settings.Default["Hotkey"];
-            cbxConsume.IsChecked = (bool)Properties.Settings.Default["Consume"];
-            cbxSound.IsChecked = (bool)Properties.Settings.Default["Sound"];
+            cbxAutoCreate.IsChecked = Properties.Settings.Default.AutoCreate;
+            cbxAutoDelete.IsChecked = Properties.Settings.Default.AutoDelete;
+            cbxHotkey.IsChecked = Properties.Settings.Default.Hotkey;
+            cbxConsume.IsChecked = Properties.Settings.Default.Consume;
+            cbxSound.IsChecked = Properties.Settings.Default.Sound;
+            cbxImage.IsChecked = Properties.Settings.Default.Image;
+
+
             comboWeapons.Items.Clear();
             Model.Weapons.ForEach(w => comboWeapons.Items.Add(w));
             comboWeapons.SelectedIndex = selectedIndex;
@@ -242,6 +250,16 @@ namespace Gadgetlemage
                     Console.Beep();
                 }
             }));
+
+            bool image = cbxImage.IsChecked ?? false;
+            /**
+            * If we had to create weapon manually change destination image to 
+            * image used for manual weapon creation.
+            */
+            if (image)
+            {
+                Image.changeToManualImage();
+            }
         }
 
         /// <summary>
@@ -306,6 +324,26 @@ namespace Gadgetlemage
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         }
 
+        /// <summary>
+        /// Opens setting window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSetttings_Click(object sender, RoutedEventArgs e)
+        {
+            settingWindow.Show();
+        }
+
+        /// <summary>
+        /// Updates image value
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbxImage_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Image = cbxImage.IsChecked ?? false;
+        }
+
 #if DEBUG
         /// <summary>
         /// Debug method
@@ -318,5 +356,6 @@ namespace Gadgetlemage
             Model.Debug();
         }
 #endif
+
     }
 }

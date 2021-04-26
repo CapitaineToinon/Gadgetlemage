@@ -1,0 +1,45 @@
+﻿<Window x:Class="Gadgetlemage.SettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gadgetlemage"
+        mc:Ignorable="d"
+        Title="Additional settings" Height="276.668" Width="667.935" ResizeMode="NoResize">
+    <Grid Margin="0,6,2,0" Height="232" VerticalAlignment="Top">
+        <GroupBox Header="Hotkey" Margin="17,130,10,0" VerticalAlignment="Top" FontFamily="Roboto" Height="92">
+            <Grid Margin="0,0,0,1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Create Weapon" Margin="10" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbxCreateHotkey" Grid.Column="1" Height="23" Margin="10" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <Button x:Name="btnCreateHotkey" Content="Change Hotkey" Margin="10,10,10,0" VerticalAlignment="Top" Height="22" Grid.Column="2" Click="btnCreateHotkey_Click"/>
+                <Label Content="Delete Shield" Margin="10,37,10,0" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbxDeleteHotkey" Grid.Column="1" Height="23" Margin="10,37,10,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <Button x:Name="btnDeleteHotkey" Content="Change Hotkey" Margin="10,37,10,0" VerticalAlignment="Top" Height="22" Grid.Column="2" Click="btnDeleteHotkey_Click"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Images" Margin="17,2,10,0" VerticalAlignment="Top" FontFamily="Roboto" Height="128">
+            <Grid Margin="0,0,-2,1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Automatic drop image" Margin="10" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbxImageAutomatic" Height="23" Margin="172,10,10,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
+                <Button x:Name="btnImageAutomatic" Content="Browse" Margin="10,10,10,0" VerticalAlignment="Top" Height="22" Grid.Column="2" Click="btnImageAutomatic_Click"/>
+                <Label Content="Manual drop image" Margin="10,37,10,0" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbxImageManual" Height="23" Margin="172,39,10,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
+                <Button x:Name="btnImageManual" Content="Browse" Margin="10,39,10,0" VerticalAlignment="Top" Height="22" Grid.Column="2" Click="btnImageManual_Click"/>
+                <Label Content="Destination image" Margin="10,66,10,0" VerticalAlignment="Top"/>
+                <Button x:Name="btnImageDestination" Content="Browse" Margin="10,68,10,0" VerticalAlignment="Top" Height="22" Grid.Column="2" Click="btnImageDestination_Click"/>
+                <TextBox x:Name="tbxImageDestination" Height="23" Margin="172,67,10,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Window>
